@@ -1,6 +1,7 @@
 use core::panic::PanicInfo;
 
-use crate::{serial_println, test::qemu};
+use crate::serial_println;
+use crate::test::qemu;
 
 pub fn handler(info: &PanicInfo) -> ! {
     serial_println!("[failed]\n");

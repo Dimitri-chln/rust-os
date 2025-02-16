@@ -1,7 +1,5 @@
-use crate::{
-    println,
-    vga_buffer::{writer::BUFFER_HEIGHT, WRITER},
-};
+use crate::println;
+use crate::vga_buffer::{writer::BUFFER_HEIGHT, WRITER};
 
 #[test_case]
 fn test_println_simple() {
