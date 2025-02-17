@@ -11,7 +11,7 @@ use rust_os::serial_print;
 
 #[no_mangle]
 pub extern "C" fn _start() -> ! {
-    serial_print!("stack_overflow::test_stack_overflow...\t");
+    serial_print!("stack_overflow::stack_overflow...\t");
 
     rust_os::gdt::init();
     test_idt::init();
@@ -63,6 +63,6 @@ mod test_idt {
         serial_println!("[ok]");
 
         qemu::exit(qemu::ExitCode::Success);
-        loop {}
+        rust_os::hlt_loop();
     }
 }

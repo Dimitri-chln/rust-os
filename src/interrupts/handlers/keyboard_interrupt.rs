@@ -16,9 +16,9 @@ pub extern "x86-interrupt" fn handler(_stack_frame: InterruptStackFrame) {
     }
 
     let mut keyboard = KEYBOARD.lock();
-    let mut port = Port::<u8>::new(0x60);
+    let mut port = Port::new(0x60);
 
-    let scancode = unsafe { port.read() };
+    let scancode: u8 = unsafe { port.read() };
     if let Ok(Some(key_event)) = keyboard.add_byte(scancode) {
         if let Some(key) = keyboard.process_keyevent(key_event) {
             match key {

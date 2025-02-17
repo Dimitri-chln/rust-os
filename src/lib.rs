@@ -6,11 +6,15 @@
 #![cfg_attr(test, test_runner(crate::test::runner))]
 #![cfg_attr(test, reexport_test_harness_main = "test_main")]
 
+extern crate alloc;
+
+pub mod allocator;
 pub mod gdt;
 mod hlt;
 mod init;
 pub mod interrupts;
 pub mod macros;
+pub mod memory;
 pub mod panic;
 pub mod serial;
 pub mod vga_buffer;
@@ -22,12 +26,14 @@ pub mod test;
 cfg_test! {
     use core::panic::PanicInfo;
 
-    /// Entry point for `cargo test`
-    #[no_mangle]
-    pub extern "C" fn _start() -> ! {
+    use bootloader::{entry_point, BootInfo};
+
+    entry_point!(kernel_main);
+
+    fn kernel_main(_boot_info: &'static BootInfo) -> ! {
         init();
         test_main();
-        crate::hlt_loop();
+        hlt_loop();
     }
 
     #[panic_handler]
