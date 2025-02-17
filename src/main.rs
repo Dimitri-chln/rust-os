@@ -9,7 +9,7 @@ use rust_os::println;
 pub extern "C" fn _start() -> ! {
     rust_os::init();
     main();
-    loop {}
+    rust_os::hlt_loop();
 }
 
 #[panic_handler]

@@ -7,6 +7,7 @@
 #![cfg_attr(test, reexport_test_harness_main = "test_main")]
 
 pub mod gdt;
+mod hlt;
 mod init;
 pub mod interrupts;
 pub mod macros;
@@ -14,6 +15,7 @@ pub mod panic;
 pub mod serial;
 pub mod vga_buffer;
 
+pub use hlt::hlt_loop;
 pub use init::init;
 
 pub mod test;
@@ -25,7 +27,7 @@ cfg_test! {
     pub extern "C" fn _start() -> ! {
         init();
         test_main();
-        loop {}
+        crate::hlt_loop();
     }
 
     #[panic_handler]

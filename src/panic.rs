@@ -4,5 +4,5 @@ use crate::println;
 
 pub fn handler(info: &PanicInfo) -> ! {
     println!("{info}");
-    loop {}
+    crate::hlt_loop();
 }

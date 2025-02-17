@@ -3,7 +3,8 @@ use super::pics::PIC_1_OFFSET;
 #[derive(Debug, Clone, Copy)]
 #[repr(u8)]
 pub enum InterruptIndex {
-    Timer = PIC_1_OFFSET + 0,
+    Timer = PIC_1_OFFSET,
+    Keyboard,
 }
 
 impl InterruptIndex {

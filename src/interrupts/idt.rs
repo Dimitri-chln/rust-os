@@ -10,16 +10,18 @@ lazy_static! {
         let mut idt = InterruptDescriptorTable::new();
 
         // Exceptions
-        idt.breakpoint.set_handler_fn(breakpoint_handler);
+        idt.breakpoint.set_handler_fn(breakpoint::handler);
+        idt.page_fault.set_handler_fn(page_fault::handler);
+
         unsafe {
             idt.double_fault
-                .set_handler_fn(double_fault_handler)
+                .set_handler_fn(double_fault::handler)
                 .set_stack_index(gdt::tss::DOUBLE_FAULT_IST_INDEX);
         }
 
         // Interrupts
-        idt[InterruptIndex::Timer.as_usize()]
-            .set_handler_fn(timer_interrupt_handler);
+        idt[InterruptIndex::Timer.as_usize()].set_handler_fn(timer_interrupt::handler);
+        idt[InterruptIndex::Keyboard.as_usize()].set_handler_fn(keyboard_interrupt::handler);
 
         idt
     };

@@ -7,5 +7,5 @@ pub fn handler(info: &PanicInfo) -> ! {
     serial_println!("[failed]\n");
     serial_println!("Error: {info}\n");
     qemu::exit(qemu::ExitCode::Failed);
-    loop {}
+    crate::hlt_loop();
 }
