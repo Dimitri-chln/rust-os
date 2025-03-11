@@ -6,12 +6,12 @@
 
 use core::panic::PanicInfo;
 
-use rust_os::println;
+use rust_os::println_vga;
 
 #[no_mangle] // don't mangle the name of this function
 pub extern "C" fn _start() -> ! {
     test_main();
-    rust_os::hlt_loop();
+    rust_os::utils::hlt_loop();
 }
 
 #[panic_handler]
@@ -21,5 +21,5 @@ fn panic(info: &PanicInfo) -> ! {
 
 #[test_case]
 fn test_println() {
-    println!("test_println output");
+    println_vga!("test_println output");
 }

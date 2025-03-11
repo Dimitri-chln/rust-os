@@ -10,16 +10,16 @@ extern crate alloc;
 
 pub mod allocator;
 pub mod gdt;
-mod hlt;
 mod init;
 pub mod interrupts;
 pub mod macros;
 pub mod memory;
 pub mod panic;
 pub mod serial;
+pub mod task;
+pub mod utils;
 pub mod vga_buffer;
 
-pub use hlt::hlt_loop;
 pub use init::init;
 
 pub mod test;
@@ -33,7 +33,7 @@ cfg_test! {
     fn kernel_main(_boot_info: &'static BootInfo) -> ! {
         init();
         test_main();
-        hlt_loop();
+        utils::hlt_loop();
     }
 
     #[panic_handler]

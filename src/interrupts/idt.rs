@@ -20,8 +20,8 @@ lazy_static! {
         }
 
         // Interrupts
-        idt[InterruptIndex::Timer.as_usize()].set_handler_fn(timer_interrupt::handler);
-        idt[InterruptIndex::Keyboard.as_usize()].set_handler_fn(keyboard_interrupt::handler);
+        idt[InterruptIndex::Timer.as_usize()].set_handler_fn(timer::handler);
+        idt[InterruptIndex::Keyboard.as_usize()].set_handler_fn(keyboard::handler);
 
         idt
     };

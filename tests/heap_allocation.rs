@@ -26,7 +26,7 @@ fn kernel_main(boot_info: &'static BootInfo) -> ! {
     allocator::init_heap(&mut mapper, &mut frame_allocator).expect("heap initialization failed");
 
     test_main();
-    rust_os::hlt_loop();
+    rust_os::utils::hlt_loop();
 }
 
 #[panic_handler]

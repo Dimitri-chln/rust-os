@@ -63,6 +63,6 @@ mod test_idt {
         serial_println!("[ok]");
 
         qemu::exit(qemu::ExitCode::Success);
-        rust_os::hlt_loop();
+        rust_os::utils::hlt_loop();
     }
 }
