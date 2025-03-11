@@ -20,5 +20,5 @@ macro_rules! print_vga {
 #[macro_export]
 macro_rules! println_vga {
     () => ($crate::print!("\n"));
-    ($($arg:tt)*) => ($crate::print!("{}\n", format_args!($($arg)*)));
+    ($($arg:tt)*) => ($crate::print_vga!("{}\n", format_args!($($arg)*)));
 }

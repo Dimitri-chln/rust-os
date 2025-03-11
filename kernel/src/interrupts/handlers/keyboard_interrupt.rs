@@ -6,7 +6,7 @@ use x86_64::structures::idt::InterruptStackFrame;
 
 use crate::interrupts::index::InterruptIndex;
 use crate::interrupts::pics::PICS;
-use crate::print;
+use crate::print_vga;
 
 pub extern "x86-interrupt" fn handler(_stack_frame: InterruptStackFrame) {
     lazy_static! {
@@ -22,8 +22,8 @@ pub extern "x86-interrupt" fn handler(_stack_frame: InterruptStackFrame) {
     if let Ok(Some(key_event)) = keyboard.add_byte(scancode) {
         if let Some(key) = keyboard.process_keyevent(key_event) {
             match key {
-                DecodedKey::Unicode(character) => print!("{}", character),
-                DecodedKey::RawKey(key) => print!("{:?}", key),
+                DecodedKey::Unicode(character) => print_vga!("{}", character),
+                DecodedKey::RawKey(key) => print_vga!("{:?}", key),
             }
         }
     }

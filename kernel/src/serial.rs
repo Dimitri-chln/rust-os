@@ -1,4 +1,4 @@
-mod inner;
 pub mod macros;
+mod port;
 
-pub use inner::SERIAL1;
+pub use port::SERIAL1;

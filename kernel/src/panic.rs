@@ -1,8 +1,8 @@
 use core::panic::PanicInfo;
 
-use crate::println;
+use crate::println_vga;
 
 pub fn handler(info: &PanicInfo) -> ! {
-    println!("{info}");
+    println_vga!("{info}");
     crate::hlt_loop();
 }

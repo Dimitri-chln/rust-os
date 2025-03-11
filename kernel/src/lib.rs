@@ -10,6 +10,7 @@ extern crate alloc;
 
 pub mod allocator;
 pub mod frame_buffer;
+pub mod drivers;
 pub mod gdt;
 mod hlt;
 mod init;
@@ -18,6 +19,7 @@ pub mod macros;
 pub mod memory;
 pub mod panic;
 pub mod serial;
+pub mod utils;
 pub mod vga_buffer;
 
 pub use hlt::hlt_loop;
