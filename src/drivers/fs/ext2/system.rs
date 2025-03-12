@@ -1,9 +1,9 @@
 use x86_64::VirtAddr;
 
-use super::structs::SuperBlock;
+use super::structs::{inode::Inode, superblock::SuperBlock};
 
 pub struct System {
-    superblock: &'static SuperBlock,
+    pub(super) superblock: &'static SuperBlock,
 }
 
 impl System {
@@ -12,5 +12,9 @@ impl System {
         Some(Self {
             superblock: SuperBlock::new(volume_start)?,
         })
+    }
+
+    pub fn root_inode(&self) -> &Inode {
+        self.superblock.inode(2)
     }
 }

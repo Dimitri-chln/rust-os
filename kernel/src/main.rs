@@ -55,6 +55,9 @@ fn kernel_main(boot_info: &'static mut BootInfo) -> ! {
         Rc::strong_count(&cloned_reference)
     );
 
+    let fs = unsafe { ext2::System::new(VirtAddr::new(0)).unwrap() };
+    fs.read_from_root(PathBuf::from("/etc/systemd"));
+
     kernel::hlt_loop();
 }
 

@@ -1,5 +1,7 @@
 use bitflags::bitflags;
 
+use super::block_pointer::BlockPointers;
+
 #[derive(Debug)]
 #[repr(C, packed)]
 pub struct Inode {
@@ -51,7 +53,7 @@ pub struct Inode {
     ///
     /// - Bytes 36-39
     pub os_specific_1: [u8; 4],
-    /// Direct Block Pointers
+    /// Block Pointers
     ///
     /// - Bytes 40-99
     pub block_pointers: BlockPointers,
@@ -137,7 +139,7 @@ impl TypePermissions {
         let file_type = self.type_permissions & 0xF000;
         let permissions = self.type_permissions & 0x0FFF;
 
-        // Safety: The variables are created above so their addresses are valid
+        // Safety: The variables are created above
         let file_type = unsafe { *(file_type as *const Type) };
         let permissions = unsafe { *(permissions as *const Permissions) };
 
@@ -166,7 +168,7 @@ bitflags! {
         const NO_LAST_ACCESS_UPDATE = 1 << 7;
 
         /**
-         * Reserved
+         * [...] Reserved [...]
          */
 
         /// Hash indexed directory
@@ -176,17 +178,4 @@ bitflags! {
         /// Journal file data
         const JOURNAL_FILE_DATA = 1 << 18;
     }
-}
-
-#[derive(Clone, Copy, Debug)]
-#[repr(C, packed)]
-pub struct BlockPointers {
-    pub direct: [u32; 12],
-    pub singly_indirect: u32,
-    pub doubly_indirect: u32,
-    pub triply_indirect: u32,
-}
-
-impl BlockPointers {
-    // iterator
 }

@@ -2,7 +2,7 @@ use bitflags::bitflags;
 use x86_64::VirtAddr;
 
 use super::{
-    block_group_descriptor::BlockGroupDescriptor,
+    block::Block, block_group::BlockGroup, block_group_descriptor::BlockGroupDescriptor,
     block_group_descriptor_table::BlockGroupDescriptorTable, inode::Inode,
 };
 
@@ -282,13 +282,9 @@ impl SuperBlock {
 
     /// Safety: `volume_start` must be the start address of the volume
     pub unsafe fn new(volume_start: VirtAddr) -> Option<&'static Self> {
-        let superblock = &*Self::new_ptr(volume_start);
+        let superblock = &*(volume_start + Self::OFFSET).as_ptr::<Self>();
         let signature = superblock.signature;
         signature.valid().then_some(superblock)
-    }
-
-    fn new_ptr(volume_start: VirtAddr) -> *const Self {
-        (volume_start + Self::OFFSET).as_ptr()
     }
 
     pub fn block_size(&self) -> u32 {
@@ -303,48 +299,51 @@ impl SuperBlock {
         self.total_blocks.div_ceil(self.blocks_per_group)
     }
 
-    /// Returns [`None`] when the block number exceeds the number of blocks defined in the superblock
-    pub fn block_address(&self, number: u32) -> Option<VirtAddr> {
-        if number >= self.total_blocks {
+    /// Returns [`None`] when the block number exceeds the number of blocks defined in the superblock.
+    pub fn block_ptr(&self, block_number: u32) -> Option<*const u8> {
+        if block_number >= self.total_blocks {
             return None;
         }
 
-        let start_address = VirtAddr::from_ptr(self);
-        let block_offset = number - self.block_number;
-        let address_offset = block_offset * self.block_size();
+        let start_ptr = self as *const Self;
+        let block_offset = block_number - self.block_number;
+        let ptr_offset = block_offset * self.block_size();
+        let block_ptr = unsafe { start_ptr.add(ptr_offset as usize) } as *const u8;
 
-        Some(start_address + address_offset as u64)
+        Some(block_ptr)
     }
 
-    pub fn block_group_descriptor_table(&self) -> &BlockGroupDescriptorTable {
+    pub fn block(&self, block_number: u32) -> Option<Block> {
+        self.block_ptr(block_number)
+            .map(|block_ptr| Block::from_ptr(block_ptr, self.block_size() as usize))
+    }
+
+    fn block_group_descriptor_table(&self) -> BlockGroupDescriptorTable {
         let block_number = if self.block_size() == 1024 { 2 } else { 1 };
-        let block_group_descriptor_table = self
-            .block_address(block_number)
-            .expect("block group descriptor table should be in range")
-            .as_ptr();
 
-        // Safety: The block group descriptor table is in range so its address is valid
-        unsafe { &*block_group_descriptor_table }
+        let block_group_descriptor_table_start_ptr = self
+            .block_ptr(block_number)
+            .expect("block group descriptor table out of range");
+
+        BlockGroupDescriptorTable::from_ptr(
+            block_group_descriptor_table_start_ptr as *const BlockGroupDescriptor,
+            self.total_block_groups() as usize,
+        )
     }
 
-    pub fn block_group_descriptor(&self, block_group_number: u32) -> &BlockGroupDescriptor {
-        &self.block_group_descriptor_table()[block_group_number as usize]
+    pub fn block_group(&self, block_group_number: u32) -> BlockGroup {
+        BlockGroup {
+            descriptor: &self.block_group_descriptor_table()[block_group_number as usize],
+        }
     }
 
     pub fn inode(&self, inode_number: u32) -> &Inode {
         let block_group_number = (inode_number - 1) / self.inodes_per_group;
-        let block_group = self.block_group_descriptor(block_group_number);
 
-        let inode_table_starting_block_address = self
-            .block_address(block_group.inode_table_starting_block_number)
-            .expect("inode should be in range");
-
+        let block_group = self.block_group(block_group_number);
+        let inode_table = block_group.inode_table(self);
         let inode_index = (inode_number - 1) % self.inodes_per_group;
-        let address_offset = inode_index * self.inode_size as u32;
-        let inode_address = inode_table_starting_block_address + address_offset as u64;
-        let inode = inode_address.as_ptr();
 
-        // Safety: The inode is in range so its address is valid
-        unsafe { &*inode }
+        &inode_table[inode_index as usize]
     }
 }

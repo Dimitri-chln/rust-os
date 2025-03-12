@@ -1,20 +1,23 @@
+use core::slice;
+
 use super::block_group_descriptor::BlockGroupDescriptor;
 
-#[repr(transparent)]
-pub struct BlockGroupDescriptorTable {
-    inner: &'static [BlockGroupDescriptor],
+pub struct BlockGroupDescriptorTable<'a> {
+    inner: &'a [BlockGroupDescriptor],
 }
 
-impl core::ops::Deref for BlockGroupDescriptorTable {
-    type Target = &'static [BlockGroupDescriptor];
-
-    fn deref(&self) -> &Self::Target {
-        &self.inner
+impl<'a> BlockGroupDescriptorTable<'a> {
+    pub fn from_ptr(ptr: *const BlockGroupDescriptor, size: usize) -> Self {
+        Self {
+            inner: unsafe { slice::from_raw_parts(ptr, size) },
+        }
     }
 }
 
-impl core::ops::DerefMut for BlockGroupDescriptorTable {
-    fn deref_mut(&mut self) -> &mut Self::Target {
-        &mut self.inner
+impl<'a> core::ops::Deref for BlockGroupDescriptorTable<'a> {
+    type Target = &'a [BlockGroupDescriptor];
+
+    fn deref(&self) -> &Self::Target {
+        &self.inner
     }
 }
