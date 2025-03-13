@@ -1,8 +1,7 @@
-use core::{
-    array,
-    iter::{Chain, Flatten},
-};
+use core::array;
+use core::iter::{Chain, Flatten};
 
+use super::directory_entry;
 use super::{block::Block, superblock::SuperBlock};
 
 #[derive(Clone, Copy, Debug)]
@@ -22,11 +21,25 @@ impl BlockPointers {
     pub fn iter<'a>(&'a self, superblock: &'a SuperBlock) -> Iter<'a> {
         Iter::new(self, superblock)
     }
+
+    // Safety: The block pointers must belong to a directory inode
+    pub unsafe fn iter_directory_entries<'a>(
+        &'a self,
+        superblock: &'a SuperBlock,
+    ) -> directory_entry::Iter<'a> {
+        directory_entry::Iter::new(self, superblock)
+    }
 }
 
 #[derive(Clone, Copy, Debug)]
 #[repr(transparent)]
 pub struct DirectPointer(u32);
+
+impl DirectPointer {
+    pub fn is_empty(&self) -> bool {
+        self.0 == 0
+    }
+}
 
 impl core::ops::Deref for DirectPointer {
     type Target = u32;
@@ -169,7 +182,6 @@ type DoublyIter<'a> = Flatten<DoublyIndirectIter<'a>>;
 type TriplyIter<'a> = Flatten<Flatten<TriplyIndirectIter<'a>>>;
 
 pub struct Iter<'a> {
-    superblock: &'a SuperBlock,
     inner: Chain<Chain<Chain<DirectIter, SinglyIter<'a>>, DoublyIter<'a>>, TriplyIter<'a>>,
 }
 
@@ -183,7 +195,6 @@ impl<'a> Iter<'a> {
         let triply_iter = TriplyIndirectIter::new(value.triply_indirect, superblock);
 
         Self {
-            superblock,
             inner: direct_iter
                 .chain(singly_iter)
                 .chain(doubly_iter.flatten())
@@ -196,6 +207,6 @@ impl<'a> Iterator for Iter<'a> {
     type Item = DirectPointer;
 
     fn next(&mut self) -> Option<Self::Item> {
-        self.inner.next()
+        self.inner.find(|direct_pointer| !direct_pointer.is_empty())
     }
 }

@@ -56,7 +56,8 @@ fn kernel_main(boot_info: &'static mut BootInfo) -> ! {
     );
 
     let fs = unsafe { ext2::System::new(VirtAddr::new(0)).unwrap() };
-    fs.read_from_root(PathBuf::from("/etc/systemd"));
+    let inode = fs.read(PathBuf::from("/home/dimitri"), None);
+    println!("{inode:?}");
 
     kernel::hlt_loop();
 }

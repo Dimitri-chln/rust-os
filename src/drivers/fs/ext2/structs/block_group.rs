@@ -1,7 +1,8 @@
-use super::{
-    block::Block, block_group_descriptor::BlockGroupDescriptor, inode::Inode,
-    inode_table::InodeTable, superblock::SuperBlock,
-};
+use super::block::Block;
+use super::block_group_descriptor::BlockGroupDescriptor;
+use super::inode::Inode;
+use super::inode_table::InodeTable;
+use super::superblock::SuperBlock;
 
 pub struct BlockGroup<'a> {
     pub descriptor: &'a BlockGroupDescriptor,
@@ -27,11 +28,8 @@ impl BlockGroup<'_> {
     pub fn inode_table<'a>(&self, superblock: &'a SuperBlock) -> InodeTable<'a> {
         let inode_table_start_ptr = superblock
             .block_ptr(self.descriptor.inode_table_starting_block_number)
-            .expect("inode table out of range");
+            .expect("inode table out of range") as *const Inode;
 
-        InodeTable::from_ptr(
-            inode_table_start_ptr as *const Inode,
-            superblock.inodes_per_group as usize,
-        )
+        InodeTable::from_ptr(inode_table_start_ptr, superblock.inodes_per_group as usize)
     }
 }

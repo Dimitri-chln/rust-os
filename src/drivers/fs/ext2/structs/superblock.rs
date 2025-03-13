@@ -1,10 +1,11 @@
 use bitflags::bitflags;
 use x86_64::VirtAddr;
 
-use super::{
-    block::Block, block_group::BlockGroup, block_group_descriptor::BlockGroupDescriptor,
-    block_group_descriptor_table::BlockGroupDescriptorTable, inode::Inode,
-};
+use super::block::Block;
+use super::block_group::BlockGroup;
+use super::block_group_descriptor::BlockGroupDescriptor;
+use super::block_group_descriptor_table::BlockGroupDescriptorTable;
+use super::inode::Inode;
 
 #[derive(Debug)]
 #[repr(C, packed)]
@@ -308,7 +309,7 @@ impl SuperBlock {
         let start_ptr = self as *const Self;
         let block_offset = block_number - self.block_number;
         let ptr_offset = block_offset * self.block_size();
-        let block_ptr = unsafe { start_ptr.add(ptr_offset as usize) } as *const u8;
+        let block_ptr = unsafe { start_ptr.add(ptr_offset as usize) as *const u8 };
 
         Some(block_ptr)
     }
@@ -323,10 +324,11 @@ impl SuperBlock {
 
         let block_group_descriptor_table_start_ptr = self
             .block_ptr(block_number)
-            .expect("block group descriptor table out of range");
+            .expect("block group descriptor table out of range")
+            as *const BlockGroupDescriptor;
 
         BlockGroupDescriptorTable::from_ptr(
-            block_group_descriptor_table_start_ptr as *const BlockGroupDescriptor,
+            block_group_descriptor_table_start_ptr,
             self.total_block_groups() as usize,
         )
     }

@@ -1,6 +1,5 @@
-use crate::drivers::fs::ext2::structs::{
-    block_group_descriptor::BlockGroupDescriptor, superblock::SuperBlock,
-};
+use crate::drivers::fs::ext2::structs::block_group_descriptor::BlockGroupDescriptor;
+use crate::drivers::fs::ext2::structs::superblock::SuperBlock;
 
 #[test_case]
 fn test_superblock_size() {
