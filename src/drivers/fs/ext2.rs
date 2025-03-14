@@ -1,7 +1,7 @@
 mod structs;
-mod system;
+mod wrapper;
 
-pub use system::System;
+pub use wrapper::Ext2;
 
 #[cfg(test)]
 mod tests;
