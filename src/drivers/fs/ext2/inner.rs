@@ -3,7 +3,7 @@ use x86_64::VirtAddr;
 use super::structs::directory_entry;
 use super::structs::inode::{Inode, Type};
 use super::structs::superblock::SuperBlock;
-use crate::drivers::fs::traits;
+use crate::drivers::fs::traits::FileSystem;
 use crate::utils::posix::path::PathBuf;
 
 pub struct Ext2 {
@@ -23,10 +23,7 @@ impl Ext2 {
     }
 
     fn read_directory<'a>(&'a self, inode: &'a Inode) -> Option<directory_entry::Iter<'a>> {
-        let type_permissions = inode.type_permissions;
-        let (file_type, _) = type_permissions.split();
-
-        match file_type {
+        match inode.file_type() {
             Type::Directory => unsafe {
                 // Safety: We just checked that the inode was a directory
                 Some(inode.block_pointers.iter_directory_entries(self.superblock))
@@ -36,7 +33,7 @@ impl Ext2 {
     }
 }
 
-impl traits::FileSystem for Ext2 {
+impl FileSystem for Ext2 {
     type File = Inode;
 
     fn read<'a>(
@@ -48,16 +45,18 @@ impl traits::FileSystem for Ext2 {
         let mut path_iter = path.iter();
 
         while let Some(part) = path_iter.next() {
+            // If the current inode is not a directory, break from the loop.
             let Some(mut entries) = self.read_directory(current_inode) else {
                 break;
             };
-            let Some(entry) = entries.find(|entry| entry.name() == part) else {
-                return None;
-            };
+            // If the file doesn't exist in the current directory, return immediately.
+            let entry = entries.find(|entry| entry.name() == part)?;
 
             current_inode = self.superblock.inode(entry.inode);
         }
 
+        // If `path_iter.next()` returns a value, that means we didn't finish travsersing
+        // the path, so we return `None`.
         path_iter.next().is_none().then_some(current_inode)
     }
 }

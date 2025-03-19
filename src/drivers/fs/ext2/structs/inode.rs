@@ -179,3 +179,15 @@ bitflags! {
         const JOURNAL_FILE_DATA = 1 << 18;
     }
 }
+
+impl Inode {
+    pub fn file_type(&self) -> Type {
+        let type_permissions = self.type_permissions;
+        type_permissions.split().0
+    }
+
+    pub fn permissions(&self) -> Permissions {
+        let type_permissions = self.type_permissions;
+        type_permissions.split().1
+    }
+}
