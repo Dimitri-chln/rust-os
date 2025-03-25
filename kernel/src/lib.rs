@@ -9,6 +9,7 @@
 extern crate alloc;
 
 pub mod allocator;
+pub mod frame_buffer;
 pub mod gdt;
 mod hlt;
 mod init;
@@ -26,11 +27,11 @@ pub mod test;
 cfg_test! {
     use core::panic::PanicInfo;
 
-    use bootloader::{entry_point, BootInfo};
+    use bootloader_api::{entry_point, BootInfo};
 
     entry_point!(kernel_main);
 
-    fn kernel_main(_boot_info: &'static BootInfo) -> ! {
+    fn kernel_main(_: &'static mut BootInfo) -> ! {
         init();
         test_main();
         hlt_loop();

@@ -1,9 +1,7 @@
 [unstable]
-build-std-features = ["compiler-builtins-mem"]
-build-std = ["core", "compiler_builtins", "alloc"]
+# enable the unstable artifact-dependencies feature, see
+# https://doc.rust-lang.org/nightly/cargo/reference/unstable.html#artifact-dependencies
+bindeps = true
 
-[build]
-target = "x86_64-rust_os.json"
-
-[target.'cfg(target_os = "none")']
-runner = "bootimage runner"
+# build-std-features = ["compiler-builtins-mem"]
+# build-std = ["core", "compiler_builtins", "alloc"]

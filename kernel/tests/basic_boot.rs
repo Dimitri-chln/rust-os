@@ -1,22 +1,22 @@
 #![no_std]
 #![no_main]
 #![feature(custom_test_frameworks)]
-#![test_runner(rust_os::test::runner)]
+#![test_runner(kernel::test::runner)]
 #![reexport_test_harness_main = "test_main"]
 
 use core::panic::PanicInfo;
 
-use rust_os::println;
+use kernel::println;
 
 #[no_mangle] // don't mangle the name of this function
 pub extern "C" fn _start() -> ! {
     test_main();
-    rust_os::hlt_loop();
+    kernel::hlt_loop();
 }
 
 #[panic_handler]
 fn panic(info: &PanicInfo) -> ! {
-    rust_os::test::panic::handler(info)
+    kernel::test::panic::handler(info)
 }
 
 #[test_case]
