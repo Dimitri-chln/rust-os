@@ -21,5 +21,5 @@ fn panic(info: &PanicInfo) -> ! {
 
 #[test_case]
 fn test_println() {
-    println_vga!("test_println output");
+    println!("test_println output");
 }

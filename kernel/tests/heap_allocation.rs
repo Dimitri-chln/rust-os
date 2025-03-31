@@ -12,7 +12,7 @@ use core::panic::PanicInfo;
 
 use bootloader_api::{entry_point, BootInfo};
 use kernel::allocator::{self, HEAP_SIZE};
-use kernel::memory::{self, BootInfoFrameAllocator};
+use kernel::memory;
 use x86_64::VirtAddr;
 
 entry_point!(kernel_main);
@@ -22,7 +22,8 @@ fn kernel_main(boot_info: &'static mut BootInfo) -> ! {
 
     let phys_mem_offset = VirtAddr::new(boot_info.physical_memory_offset.into_option().unwrap());
     let mut mapper = unsafe { memory::init(phys_mem_offset) };
-    let mut frame_allocator = unsafe { BootInfoFrameAllocator::init(&boot_info.memory_regions) };
+    let mut frame_allocator =
+        unsafe { memory::BootInfoFrameAllocator::init(&boot_info.memory_regions) };
     allocator::init_heap(&mut mapper, &mut frame_allocator).expect("heap initialization failed");
 
     test_main();

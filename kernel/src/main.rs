@@ -8,6 +8,9 @@ use core::panic::PanicInfo;
 use alloc::{boxed::Box, rc::Rc, vec, vec::Vec};
 use bootloader_api::config::{BootloaderConfig, Mapping};
 use bootloader_api::{entry_point, BootInfo};
+use kernel::drivers::fs::ext2::Ext2;
+use kernel::drivers::fs::traits::FileSystem;
+use kernel::utils::posix::path::PathBuf;
 use kernel::{allocator, memory, println};
 use x86_64::VirtAddr;
 
@@ -55,7 +58,7 @@ fn kernel_main(boot_info: &'static mut BootInfo) -> ! {
         Rc::strong_count(&cloned_reference)
     );
 
-    let fs = unsafe { ext2::System::new(VirtAddr::new(0)).unwrap() };
+    let fs = unsafe { Ext2::new(VirtAddr::new(0)).unwrap() };
     let inode = fs.read(PathBuf::from("/home/dimitri"), None);
     println!("{inode:?}");
 
