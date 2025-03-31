@@ -1,6 +1,7 @@
 use lazy_static::lazy_static;
 use x86_64::instructions::segmentation::{Segment, CS};
 use x86_64::instructions::tables;
+use x86_64::registers::segmentation::SS;
 use x86_64::structures::gdt::{Descriptor, GlobalDescriptorTable, SegmentSelector};
 
 use crate::gdt::tss::TSS;
@@ -30,6 +31,7 @@ pub fn init() {
 
     unsafe {
         CS::set_reg(GDT.1.code_selector);
+        SS::set_reg(SegmentSelector::NULL);
         tables::load_tss(GDT.1.tss_selector);
     }
 }

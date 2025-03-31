@@ -2,18 +2,18 @@
 #![no_main]
 #![feature(abi_x86_interrupt)]
 #![feature(custom_test_frameworks)]
-#![test_runner(rust_os::test::runner)]
+#![test_runner(kernel::test::runner)]
 #![reexport_test_harness_main = "test_main"]
 
 use core::panic::PanicInfo;
 
-use rust_os::serial_print;
+use kernel::serial_print;
 
 #[no_mangle]
 pub extern "C" fn _start() -> ! {
     serial_print!("stack_overflow::stack_overflow...\t");
 
-    rust_os::gdt::init();
+    kernel::gdt::init();
     test_idt::init();
 
     // trigger a stack overflow
@@ -24,7 +24,7 @@ pub extern "C" fn _start() -> ! {
 
 #[panic_handler]
 fn panic(info: &PanicInfo) -> ! {
-    rust_os::test::panic::handler(info)
+    kernel::test::panic::handler(info)
 }
 
 #[allow(unconditional_recursion)]
@@ -34,8 +34,8 @@ fn stack_overflow() {
 }
 
 mod test_idt {
+    use kernel::{serial_println, test::qemu};
     use lazy_static::lazy_static;
-    use rust_os::{serial_println, test::qemu};
     use x86_64::structures::idt::{InterruptDescriptorTable, InterruptStackFrame};
 
     lazy_static! {
@@ -45,7 +45,7 @@ mod test_idt {
             unsafe {
                 idt.double_fault
                     .set_handler_fn(double_fault_handler)
-                    .set_stack_index(rust_os::gdt::tss::DOUBLE_FAULT_IST_INDEX);
+                    .set_stack_index(kernel::gdt::tss::DOUBLE_FAULT_IST_INDEX);
             }
 
             idt
@@ -63,6 +63,6 @@ mod test_idt {
         serial_println!("[ok]");
 
         qemu::exit(qemu::ExitCode::Success);
-        rust_os::hlt_loop();
+        kernel::hlt_loop();
     }
 }

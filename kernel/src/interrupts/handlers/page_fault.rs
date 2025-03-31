@@ -9,7 +9,7 @@ pub extern "x86-interrupt" fn handler(
 ) {
     println!("EXCEPTION: PAGE FAULT");
     println!("Accessed Address: {:?}", Cr2::read());
-    println!("Error Code: {:?}", error_code);
-    println!("{:#?}", stack_frame);
+    println!("Error Code: {error_code:?}");
+    println!("{stack_frame:#?}");
     hlt_loop();
 }
