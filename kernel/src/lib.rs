@@ -31,8 +31,8 @@ cfg_test! {
 
     entry_point!(kernel_main);
 
-    fn kernel_main(_: &'static mut BootInfo) -> ! {
-        init();
+    fn kernel_main(boot_info: &'static mut BootInfo) -> ! {
+        init(&mut boot_info.framebuffer);
         test_main();
         hlt_loop();
     }

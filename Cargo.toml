@@ -4,7 +4,7 @@ version = "0.1.0"
 edition = "2024"
 
 [workspace]
-members = [ "drivers","kernel"]
+members = ["kernel"]
 
 [build-dependencies]
 bootloader = "0.11"

@@ -2,8 +2,11 @@ use core::{fmt, ptr};
 
 use bootloader_api::info::{FrameBufferInfo, PixelFormat};
 use noto_sans_mono_bitmap::{get_raster, RasterizedChar};
+use spin::{Mutex, Once};
 
 use super::constants::*;
+
+pub static WRITER: Once<Mutex<FrameBufferWriter>> = Once::new();
 
 /// Returns the raster of the given char or the raster of [`font_constants::BACKUP_CHAR`].
 fn get_char_raster(c: char) -> RasterizedChar {
@@ -15,6 +18,7 @@ fn get_char_raster(c: char) -> RasterizedChar {
 }
 
 /// Allows logging text to a pixel-based framebuffer.
+#[derive(Debug)]
 pub struct FrameBufferWriter {
     frame_buffer: &'static mut [u8],
     info: FrameBufferInfo,

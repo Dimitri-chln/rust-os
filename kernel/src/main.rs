@@ -20,7 +20,7 @@ pub static BOOTLOADER_CONFIG: BootloaderConfig = {
 entry_point!(kernel_main, config = &BOOTLOADER_CONFIG);
 
 fn kernel_main(boot_info: &'static mut BootInfo) -> ! {
-    kernel::init();
+    kernel::init(&mut boot_info.framebuffer);
 
     println!("Hello World!");
 

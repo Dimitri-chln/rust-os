@@ -18,7 +18,7 @@ use x86_64::VirtAddr;
 entry_point!(kernel_main);
 
 fn kernel_main(boot_info: &'static mut BootInfo) -> ! {
-    kernel::init();
+    kernel::init(&mut boot_info.framebuffer);
 
     let phys_mem_offset = VirtAddr::new(boot_info.physical_memory_offset.into_option().unwrap());
     let mut mapper = unsafe { memory::init(phys_mem_offset) };
