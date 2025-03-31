@@ -2,7 +2,7 @@ use core::fmt::Write;
 
 use x86_64::instructions::interrupts;
 
-use crate::serial::SERIAL1;
+use super::SERIAL1;
 
 #[doc(hidden)]
 pub fn _print(args: ::core::fmt::Arguments) {
@@ -16,15 +16,15 @@ pub fn _print(args: ::core::fmt::Arguments) {
 
 /// Prints to the host through the serial interface.
 #[macro_export]
-macro_rules! serial_print {
+macro_rules! print_serial {
     ($($arg:tt)*) => {
-        $crate::serial::macros::_print(format_args!($($arg)*));
+        $crate::test::serial::macros::_print(format_args!($($arg)*));
     };
 }
 
 /// Prints to the host through the serial interface, appending a newline.
 #[macro_export]
-macro_rules! serial_println {
+macro_rules! println_serial {
     () => ($crate::serial_print!("\n"));
-    ($($arg:tt)*) => ($crate::serial_print!("{}\n", format_args!($($arg)*)));
+    ($($arg:tt)*) => ($crate::print_serial!("{}\n", format_args!($($arg)*)));
 }

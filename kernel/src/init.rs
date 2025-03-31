@@ -1,6 +1,7 @@
 use bootloader_api::info::{FrameBuffer, Optional};
+use drivers::display::frame_buffer;
 
-use crate::{frame_buffer, gdt, interrupts};
+use crate::{gdt, interrupts};
 
 pub fn init(frame_buffer: &mut Optional<FrameBuffer>) {
     gdt::init();

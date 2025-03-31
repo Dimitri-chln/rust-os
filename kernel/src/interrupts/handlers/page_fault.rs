@@ -1,7 +1,7 @@
+use drivers::println;
+use utils::hlt::hlt_loop;
 use x86_64::registers::control::Cr2;
 use x86_64::structures::idt::{InterruptStackFrame, PageFaultErrorCode};
-
-use crate::{hlt_loop, println};
 
 pub extern "x86-interrupt" fn handler(
     stack_frame: InterruptStackFrame,

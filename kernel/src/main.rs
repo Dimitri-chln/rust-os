@@ -8,10 +8,12 @@ use core::panic::PanicInfo;
 use alloc::{boxed::Box, rc::Rc, vec, vec::Vec};
 use bootloader_api::config::{BootloaderConfig, Mapping};
 use bootloader_api::{entry_point, BootInfo};
-use kernel::drivers::fs::ext2::Ext2;
-use kernel::drivers::fs::traits::FileSystem;
-use kernel::utils::posix::path::PathBuf;
-use kernel::{allocator, memory, println};
+use drivers::fs::ext2::Ext2;
+use drivers::fs::traits::FileSystem;
+use drivers::println;
+use kernel::{allocator, memory};
+use utils::hlt::hlt_loop;
+use utils::posix::path::PathBuf;
 use x86_64::VirtAddr;
 
 pub static BOOTLOADER_CONFIG: BootloaderConfig = {
@@ -58,11 +60,11 @@ fn kernel_main(boot_info: &'static mut BootInfo) -> ! {
         Rc::strong_count(&cloned_reference)
     );
 
-    let fs = unsafe { Ext2::new(VirtAddr::new(0)).unwrap() };
-    let inode = fs.read(PathBuf::from("/home/dimitri"), None);
-    println!("{inode:?}");
+    // let fs = unsafe { Ext2::new(VirtAddr::new(0)).unwrap() };
+    // let inode = fs.read(PathBuf::from("/home/dimitri"), None);
+    // println!("{inode:?}");
 
-    kernel::hlt_loop();
+    hlt_loop();
 }
 
 #[panic_handler]

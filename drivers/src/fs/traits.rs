@@ -1,4 +1,4 @@
-use crate::utils::posix::path::PathBuf;
+use utils::posix::path::PathBuf;
 
 pub trait FileSystem {
     type File;

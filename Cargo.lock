@@ -121,6 +121,21 @@ dependencies = [
 ]
 
 [[package]]
+name = "drivers"
+version = "0.1.0"
+dependencies = [
+ "bitflags 2.9.0",
+ "bootloader_api",
+ "encoding_rs",
+ "lazy_static",
+ "noto-sans-mono-bitmap",
+ "spin 0.5.2",
+ "utils",
+ "volatile 0.2.7",
+ "x86_64",
+]
+
+[[package]]
 name = "encoding_rs"
 version = "0.8.35"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -196,17 +211,15 @@ checksum = "4a5f13b858c8d314ee3e8f639011f7ccefe71f97f96e50151fb991f267928e2c"
 name = "kernel"
 version = "0.1.0"
 dependencies = [
- "bitflags 2.9.0",
  "bootloader_api",
- "encoding_rs",
+ "drivers",
  "lazy_static",
  "linked_list_allocator",
  "noto-sans-mono-bitmap",
  "pc-keyboard",
  "pic8259",
  "spin 0.5.2",
- "time",
- "uart_16550",
+ "utils",
  "volatile 0.2.7",
  "x86_64",
 ]
@@ -362,8 +375,10 @@ name = "rust-os"
 version = "0.1.0"
 dependencies = [
  "bootloader",
+ "drivers",
  "kernel",
  "ovmf-prebuilt",
+ "utils",
 ]
 
 [[package]]
@@ -555,6 +570,17 @@ name = "unicode-ident"
 version = "1.0.18"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "5a5f39404a5da50712a4c1eecf25e90dd62b613502b7e925fd4e4d19b5c96512"
+
+[[package]]
+name = "utils"
+version = "0.1.0"
+dependencies = [
+ "lazy_static",
+ "spin 0.5.2",
+ "time",
+ "uart_16550",
+ "x86_64",
+]
 
 [[package]]
 name = "uuid"

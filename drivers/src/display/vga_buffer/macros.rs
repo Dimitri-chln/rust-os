@@ -3,7 +3,7 @@ use core::fmt::Write;
 
 use x86_64::instructions::interrupts;
 
-use crate::vga_buffer::WRITER;
+use super::WRITER;
 
 #[doc(hidden)]
 pub fn _print(args: fmt::Arguments) {
@@ -14,7 +14,7 @@ pub fn _print(args: fmt::Arguments) {
 
 #[macro_export]
 macro_rules! print_vga {
-    ($($arg:tt)*) => ($crate::vga_buffer::macros::_print(format_args!($($arg)*)));
+    ($($arg:tt)*) => ($crate::display::vga_buffer::macros::_print(format_args!($($arg)*)));
 }
 
 #[macro_export]

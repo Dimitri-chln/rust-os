@@ -1,5 +1,6 @@
 mod char;
 mod color;
+mod constants;
 pub mod macros;
 mod writer;
 

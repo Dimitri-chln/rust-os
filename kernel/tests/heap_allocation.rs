@@ -1,7 +1,7 @@
 #![no_std]
 #![no_main]
 #![feature(custom_test_frameworks)]
-#![test_runner(kernel::test::runner)]
+#![test_runner(utils::test::runner)]
 #![reexport_test_harness_main = "test_main"]
 
 extern crate alloc;
@@ -9,6 +9,7 @@ extern crate alloc;
 use alloc::boxed::Box;
 use alloc::vec::Vec;
 use core::panic::PanicInfo;
+use utils::hlt::hlt_loop;
 
 use bootloader_api::{entry_point, BootInfo};
 use kernel::allocator::{self, HEAP_SIZE};
@@ -27,12 +28,12 @@ fn kernel_main(boot_info: &'static mut BootInfo) -> ! {
     allocator::init_heap(&mut mapper, &mut frame_allocator).expect("heap initialization failed");
 
     test_main();
-    kernel::hlt_loop();
+    hlt_loop();
 }
 
 #[panic_handler]
 fn panic(info: &PanicInfo) -> ! {
-    kernel::test::panic::handler(info)
+    utils::test::panic::handler(info)
 }
 
 #[test_case]

@@ -1,10 +1,10 @@
+use utils::posix::path::PathBuf;
 use x86_64::VirtAddr;
 
 use super::structs::directory_entry;
 use super::structs::inode::{Inode, Type};
 use super::structs::superblock::SuperBlock;
-use crate::drivers::fs::traits::FileSystem;
-use crate::utils::posix::path::PathBuf;
+use crate::fs::traits::FileSystem;
 
 pub struct Ext2 {
     superblock: &'static SuperBlock,
@@ -14,7 +14,7 @@ impl Ext2 {
     /// Safety: `volume_start` must be the start address of the volume
     pub unsafe fn new(volume_start: VirtAddr) -> Option<Self> {
         Some(Self {
-            superblock: SuperBlock::new(volume_start)?,
+            superblock: unsafe { SuperBlock::new(volume_start)? },
         })
     }
 

@@ -283,7 +283,7 @@ impl SuperBlock {
 
     /// Safety: `volume_start` must be the start address of the volume
     pub unsafe fn new(volume_start: VirtAddr) -> Option<&'static Self> {
-        let superblock = &*(volume_start + Self::OFFSET).as_ptr::<Self>();
+        let superblock = unsafe { &*(volume_start + Self::OFFSET).as_ptr::<Self>() };
         let signature = superblock.signature;
         signature.valid().then_some(superblock)
     }
