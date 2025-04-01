@@ -40,18 +40,13 @@ fn kernel_main(boot_info: &'static mut BootInfo) -> ! {
     println!("vec at {:p}", vec.as_slice());
 
     // create a reference counted vector -> will be freed when count reaches 0
-    let reference_counted = Rc::new(vec![1, 2, 3]);
-    let cloned_reference = reference_counted.clone();
-    println!(
-        "current reference count is {}",
-        Rc::strong_count(&cloned_reference)
-    );
-    core::mem::drop(reference_counted);
-    println!(
-        "reference count is {} now",
-        Rc::strong_count(&cloned_reference)
-    );
+    let rc = Rc::new(vec![1, 2, 3]);
+    let cloned_rc = rc.clone();
+    println!("reference count is {}", Rc::strong_count(&cloned_rc));
+    core::mem::drop(rc);
+    println!("reference count is {} now", Rc::strong_count(&cloned_rc));
 
+    // read file from ext2 file system
     let fs = unsafe { Ext2::new(VirtAddr::new(0)).unwrap() };
     let inode = fs.read(PathBuf::from("/home/dimitri"), None);
     println!("Inode: {inode:?}");
