@@ -1,11 +1,11 @@
 use core::panic::PanicInfo;
 
-use crate::serial_println;
 use crate::test::qemu;
+use crate::{hlt, println_serial};
 
 pub fn handler(info: &PanicInfo) -> ! {
-    serial_println!("[failed]\n");
-    serial_println!("Error: {info}\n");
+    println_serial!("[failed]\n");
+    println_serial!("Error: {info}\n");
     qemu::exit(qemu::ExitCode::Failed);
-    crate::hlt_loop();
+    hlt::hlt_loop();
 }

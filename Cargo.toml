@@ -4,11 +4,13 @@ version = "0.1.0"
 edition = "2024"
 
 [workspace]
-members = ["kernel"]
+members = ["kernel", "drivers", "utils"]
 
 [build-dependencies]
 bootloader = "0.11"
 kernel = { path = "kernel", artifact = "bin", target = "x86_64-unknown-none" }
+drivers = { path = "drivers" }
+utils = { path = "utils" }
 
 [dependencies]
 # used for UEFI booting in QEMU

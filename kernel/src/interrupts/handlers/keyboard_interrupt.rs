@@ -1,3 +1,4 @@
+use drivers::print;
 use lazy_static::lazy_static;
 use pc_keyboard::{layouts, DecodedKey, HandleControl, Keyboard, ScancodeSet1};
 use spin::Mutex;
@@ -6,7 +7,6 @@ use x86_64::structures::idt::InterruptStackFrame;
 
 use crate::interrupts::index::InterruptIndex;
 use crate::interrupts::pics::PICS;
-use crate::print;
 
 pub extern "x86-interrupt" fn handler(_stack_frame: InterruptStackFrame) {
     lazy_static! {

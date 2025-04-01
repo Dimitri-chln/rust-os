@@ -7,11 +7,11 @@
 
 use core::panic::PanicInfo;
 
-use kernel::serial_print;
+use utils::print_serial;
 
 #[no_mangle]
 pub extern "C" fn _start() -> ! {
-    serial_print!("stack_overflow::stack_overflow...\t");
+    print_serial!("stack_overflow::stack_overflow...\t");
 
     kernel::gdt::init();
     test_idt::init();
@@ -24,7 +24,7 @@ pub extern "C" fn _start() -> ! {
 
 #[panic_handler]
 fn panic(info: &PanicInfo) -> ! {
-    kernel::test::panic::handler(info)
+    utils::test::panic::handler(info)
 }
 
 #[allow(unconditional_recursion)]
@@ -34,8 +34,9 @@ fn stack_overflow() {
 }
 
 mod test_idt {
-    use kernel::{serial_println, test::qemu};
     use lazy_static::lazy_static;
+    use utils::hlt::hlt_loop;
+    use utils::{println_serial, test::qemu};
     use x86_64::structures::idt::{InterruptDescriptorTable, InterruptStackFrame};
 
     lazy_static! {
@@ -60,9 +61,9 @@ mod test_idt {
         _stack_frame: InterruptStackFrame,
         _error_code: u64,
     ) -> ! {
-        serial_println!("[ok]");
+        println_serial!("[ok]");
 
         qemu::exit(qemu::ExitCode::Success);
-        kernel::hlt_loop();
+        hlt_loop();
     }
 }

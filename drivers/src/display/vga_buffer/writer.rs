@@ -6,9 +6,7 @@ use volatile::Volatile;
 
 use super::char::ScreenChar;
 use super::color::{Color, ColorCode};
-
-pub const BUFFER_HEIGHT: usize = 25;
-pub const BUFFER_WIDTH: usize = 80;
+use super::constants::{BUFFER_HEIGHT, BUFFER_WIDTH};
 
 #[repr(transparent)]
 pub struct Buffer {

@@ -3,8 +3,9 @@ use core::fmt::Write;
 use x86_64::instructions::interrupts;
 
 use crate::println_vga;
-use crate::vga_buffer::writer::BUFFER_HEIGHT;
-use crate::vga_buffer::WRITER;
+
+use super::WRITER;
+use super::constants::BUFFER_HEIGHT;
 
 #[test_case]
 fn test_println_simple() {

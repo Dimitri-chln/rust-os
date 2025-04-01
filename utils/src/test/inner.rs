@@ -1,10 +1,10 @@
-use crate::serial_println;
+use crate::println_serial;
 use crate::test::qemu;
 
 use super::traits::Testable;
 
 pub fn runner(tests: &[&dyn Testable]) {
-    serial_println!("Running {} tests", tests.len());
+    println_serial!("Running {} tests", tests.len());
     for test in tests {
         test.run();
     }

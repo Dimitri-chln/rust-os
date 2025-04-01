@@ -1,8 +1,9 @@
 use core::panic::PanicInfo;
 
-use crate::println;
+use drivers::println;
+use utils::hlt::hlt_loop;
 
 pub fn handler(info: &PanicInfo) -> ! {
     println!("{info}");
-    crate::hlt_loop();
+    hlt_loop();
 }

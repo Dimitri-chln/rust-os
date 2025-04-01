@@ -3,7 +3,7 @@ use core::fmt::Write;
 
 use x86_64::instructions::interrupts;
 
-use crate::frame_buffer::WRITER;
+use super::WRITER;
 
 #[doc(hidden)]
 pub fn _print(args: fmt::Arguments) {
@@ -16,7 +16,7 @@ pub fn _print(args: fmt::Arguments) {
 
 #[macro_export]
 macro_rules! print {
-    ($($arg:tt)*) => ($crate::frame_buffer::macros::_print(format_args!($($arg)*)));
+    ($($arg:tt)*) => ($crate::display::frame_buffer::macros::_print(format_args!($($arg)*)));
 }
 
 #[macro_export]
