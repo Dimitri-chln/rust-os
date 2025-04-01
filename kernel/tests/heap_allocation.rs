@@ -9,23 +9,15 @@ extern crate alloc;
 use alloc::boxed::Box;
 use alloc::vec::Vec;
 use core::panic::PanicInfo;
+use kernel::heap::constants::HEAP_SIZE;
 use utils::hlt::hlt_loop;
 
 use bootloader_api::{entry_point, BootInfo};
-use kernel::allocator::{self, HEAP_SIZE};
-use kernel::memory;
-use x86_64::VirtAddr;
 
 entry_point!(kernel_main);
 
 fn kernel_main(boot_info: &'static mut BootInfo) -> ! {
-    kernel::init(&mut boot_info.framebuffer);
-
-    let phys_mem_offset = VirtAddr::new(boot_info.physical_memory_offset.into_option().unwrap());
-    let mut mapper = unsafe { memory::init(phys_mem_offset) };
-    let mut frame_allocator =
-        unsafe { memory::BootInfoFrameAllocator::init(&boot_info.memory_regions) };
-    allocator::init_heap(&mut mapper, &mut frame_allocator).expect("heap initialization failed");
+    kernel::init(boot_info);
 
     test_main();
     hlt_loop();

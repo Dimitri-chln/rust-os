@@ -8,8 +8,8 @@
 
 extern crate alloc;
 
-pub mod allocator;
 pub mod gdt;
+pub mod heap;
 mod init;
 pub mod interrupts;
 pub mod macros;
@@ -26,7 +26,7 @@ cfg_test! {
     entry_point!(kernel_main);
 
     fn kernel_main(boot_info: &'static mut BootInfo) -> ! {
-        init(&mut boot_info.framebuffer);
+        init(boot_info);
         test_main();
         utils::hlt::hlt_loop();
     }

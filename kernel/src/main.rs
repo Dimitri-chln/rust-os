@@ -11,7 +11,6 @@ use bootloader_api::{entry_point, BootInfo};
 use drivers::fs::ext2::Ext2;
 use drivers::fs::traits::FileSystem;
 use drivers::println;
-use kernel::{allocator, memory};
 use utils::hlt::hlt_loop;
 use utils::posix::path::PathBuf;
 use x86_64::VirtAddr;
@@ -25,16 +24,9 @@ pub static BOOTLOADER_CONFIG: BootloaderConfig = {
 entry_point!(kernel_main, config = &BOOTLOADER_CONFIG);
 
 fn kernel_main(boot_info: &'static mut BootInfo) -> ! {
-    kernel::init(&mut boot_info.framebuffer);
+    kernel::init(boot_info);
 
     println!("Hello World!");
-
-    let phys_mem_offset = VirtAddr::new(boot_info.physical_memory_offset.into_option().unwrap());
-    let mut mapper = unsafe { memory::init(phys_mem_offset) };
-    let mut frame_allocator =
-        unsafe { memory::BootInfoFrameAllocator::init(&boot_info.memory_regions) };
-
-    allocator::init_heap(&mut mapper, &mut frame_allocator).expect("heap initialization failed");
 
     // allocate a number on the heap
     let heap_value = Box::new(41);
@@ -60,9 +52,9 @@ fn kernel_main(boot_info: &'static mut BootInfo) -> ! {
         Rc::strong_count(&cloned_reference)
     );
 
-    // let fs = unsafe { Ext2::new(VirtAddr::new(0)).unwrap() };
-    // let inode = fs.read(PathBuf::from("/home/dimitri"), None);
-    // println!("{inode:?}");
+    let fs = unsafe { Ext2::new(VirtAddr::new(0)).unwrap() };
+    let inode = fs.read(PathBuf::from("/home/dimitri"), None);
+    println!("Inode: {inode:?}");
 
     hlt_loop();
 }
