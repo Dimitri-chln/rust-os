@@ -6,5 +6,6 @@
 
 extern crate alloc;
 
+pub mod bus;
 pub mod display;
 pub mod fs;
