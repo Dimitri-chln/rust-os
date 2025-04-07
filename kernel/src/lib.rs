@@ -15,6 +15,7 @@ pub mod interrupts;
 pub mod macros;
 pub mod memory;
 pub mod panic;
+pub mod task;
 
 pub use init::init;
 
