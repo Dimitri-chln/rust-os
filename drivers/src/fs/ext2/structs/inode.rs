@@ -1,3 +1,5 @@
+use core::mem;
+
 use bitflags::bitflags;
 
 use super::block_pointer::BlockPointers;
@@ -136,12 +138,8 @@ bitflags! {
 
 impl TypePermissions {
     pub fn split(&self) -> (Type, Permissions) {
-        let file_type = self.type_permissions & 0xF000;
-        let permissions = self.type_permissions & 0x0FFF;
-
-        // Safety: The variables are created above
-        let file_type = unsafe { *(file_type as *const Type) };
-        let permissions = unsafe { *(permissions as *const Permissions) };
+        let file_type = unsafe { mem::transmute(self.type_permissions & 0xF000) };
+        let permissions = unsafe { mem::transmute(self.type_permissions & 0x0FFF) };
 
         (file_type, permissions)
     }

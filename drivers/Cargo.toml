@@ -5,6 +5,7 @@ edition = "2024"
 
 [dependencies]
 bootloader_api = "0.11"
+bitfields = "0.12.4"
 bitflags = "2.9.0"
 encoding_rs = "0.8.35"
 lazy_static = { version = "1.0", features = ["spin_no_std"] }
