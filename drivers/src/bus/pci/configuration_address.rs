@@ -32,6 +32,6 @@ pub struct ConfigurationAddress {
 impl ConfigurationAddress {
     /// Write configuration address to the [`CONFIG_ADDRESS`] I/O port
     pub fn write(&self) {
-        unsafe { CONFIG_ADDRESS.lock().write(self.into_bits()) };
+        unsafe { CONFIG_ADDRESS.lock().write(self.into_bits().to_le()) };
     }
 }
